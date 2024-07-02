@@ -158,6 +158,31 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/admin/user-management',
+    component: Layout,
+    redirect: '/category',
+    name: 'user-management',
+    meta: {
+      title: 'Quản lý người dùng',
+      icon: 'component'
+    },
+    children: [
+      {
+        path: 'customer-at-the-shop',
+        component: () => import('@/views-system/cms/user-management/customer-at-the-shop.vue'),
+        name: 'customer-at-the-shop',
+        meta: { title: 'Khách mua tại của hàng', noCache: true }
+      },
+      {
+        path: 'customer-at-the-shop',
+        component: () => import('@/views-system/cms/user-management/customer-at-the-shop.vue'),
+        name: 'customer-at-the-shop',
+        meta: { title: 'Khách mua tại của hàng', noCache: true }
+      }
+    ]
+  },
+
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
