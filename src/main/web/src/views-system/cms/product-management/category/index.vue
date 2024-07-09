@@ -3,71 +3,18 @@
     <el-table
       :key="tableKey"
       v-loading="listLoading"
-      :data="listOfCategories"
+      :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%;"
+      :default-sort="sortDefault"
+      @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="{row}">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center">
+        <!-- <template slot-scope="{row}">
           <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Date" width="150px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Title" min-width="150px">
-        <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Author" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.reviewer }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Imp" width="80px">
-        <template slot-scope="{row}">
-          <svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-      <el-table-column label="Readings" align="center" width="95">
-        <template slot-scope="{row}">
-          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Status" class-name="status-col" width="100">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
-          </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            Publish
-          </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
-          </el-button>
-        </template>
+        </template> -->
       </el-table-column>
     </el-table>
 
@@ -76,36 +23,29 @@
 </template>
 
 <script>
-import { getListOfCategoriesByCriteria } from '@/api/category'
-import { Status } from '@/enums/enums'
+import { brandGetAllPage } from '@/api/category'
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'Category',
-  components: {},
+  components: { Pagination },
   data() {
     return {
       tableKey: 0,
+      list: null,
       total: 0,
-      isLoadingTable: false,
-      isLoadingModal: false,
+      listLoading: true,
       listQuery: {
         currentPage: 1,
         perPage: 10,
         filter: '',
         sortBy: '',
-        sortDesc: true,
-        status: Status.ACTIVE
+        sortDesc: ''
       },
-      Status: Status,
-      showModal: false,
-      category: {
-        id: '',
-        name: '',
-        description: '',
-        createdAt: new Date(),
-        status: Status.ACTIVE
-      },
-      listOfCategories: []
+      sortDefault: {
+        prop: '',
+        order: ''
+      }
     }
   },
   watch: {
@@ -120,7 +60,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getListOfCategoriesByCriteria(this.listQuery).then(res => {
+      brandGetAllPage(this.listQuery).then(res => {
         console.log(res)
         this.list = res.items
         this.total = res.totalRows
@@ -130,6 +70,10 @@ export default {
           this.listLoading = false
         }, 1.5 * 1000)
       })
+    },
+    sortChange(sortChange) {
+      this.listQuery.sortBy = sortChange.prop
+      this.listQuery.sortDesc = sortChange.order === 'descending'
     }
   }
 }

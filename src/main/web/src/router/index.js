@@ -149,10 +149,10 @@ export const asyncRoutes = [
         meta: { title: 'Danh mục', noCache: true }
       },
       {
-        path: 'category',
-        component: () => import('@/views-system/cms/product-management/category/index.vue'),
-        name: 'PageCategory',
-        meta: { title: 'Danh mục', noCache: true }
+        path: 'brand',
+        component: () => import('@/views-system/cms/product-management/brand/index.vue'),
+        name: 'product-management-brand',
+        meta: { title: 'Thương hiệu', noCache: true }
       }
     ]
   },

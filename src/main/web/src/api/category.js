@@ -34,3 +34,10 @@ export const getAllCategory = () =>
     url: '/category',
     method: 'get'
   })
+
+export const brandGetAllPage = (params) =>
+  request({
+    url: '/category/get-all-page',
+    method: 'get',
+    params
+  })
